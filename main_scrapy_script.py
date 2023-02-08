@@ -6,6 +6,7 @@ import re
 from datetime import date, timedelta
 from cleaner_script import dfCleaner
 import logging
+import httpx
 
 logging.basicConfig(
     format="%(asctime)s %(message)s",
@@ -63,7 +64,7 @@ def main():
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
     for i in range(1, 200):
-        page_url = requests.get(url.format(i))
+        page_url = httpx.get(url.format(i))
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
         # just to keep track of the proggress for testing
