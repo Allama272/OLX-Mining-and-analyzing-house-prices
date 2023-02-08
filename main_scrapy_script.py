@@ -6,6 +6,7 @@ import re
 from datetime import date, timedelta
 from cleaner_script import dfCleaner
 import logging
+from urllib.request import Request, urlopen
 
 
 logging.basicConfig(
@@ -64,7 +65,10 @@ def main():
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
     for i in range(1, 200):
-        page_url = requests.get(url.format(i))
+
+        session = requests.Session()
+        page_url = session.get(url.format(i),headers={'User-Agent': 'Mozilla/5.0'})
+
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
         # just to keep track of the proggress for testing
