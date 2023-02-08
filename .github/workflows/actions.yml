@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: execute py script # run main_scrapy_script.py
-        run: python main.py
+        run: python main_scrapy_script.py.py
 
       - name: commit files
         run: |
