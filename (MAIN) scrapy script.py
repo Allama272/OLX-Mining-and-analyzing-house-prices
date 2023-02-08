@@ -62,7 +62,7 @@ def main():
     # Only apartments in alexandria
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
-    for i in range(1, 5):
+    for i in range(1, 200):
         page_url = requests.get(url.format(i))
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
