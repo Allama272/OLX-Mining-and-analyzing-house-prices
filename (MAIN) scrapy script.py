@@ -5,6 +5,24 @@ import numpy as np
 import re
 from datetime import date, timedelta
 from cleaner_script import dfCleaner
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S%z",level=logging.DEBUG
+)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s:%(message)s",datefmt="%Y-%m-%dT%H:%M:%S%z")
+
+file_handler = logging.FileHandler('weeklyLogger.log')
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+
 
 def days_ago_finder(str_ago):
     split = re.search(r"(\d+) (\w+)", str_ago).groups()
@@ -44,12 +62,12 @@ def main():
     # Only apartments in alexandria
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
-    for i in range(1, 200):
+    for i in range(1, 5):
         page_url = requests.get(url.format(i))
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
-        # just to keep track of the proggress
-        print(i, ' out of 199')
+        # just to keep track of the proggress for testing
+        logging.debug('{} out of 199'.format(i))
         for j in range(len(content)):
             href_tag = content[j].find('a', href=True)
             href_tag = str(href_tag)
@@ -76,9 +94,13 @@ def main():
             list_location.append(location)
             list_date_posted_string.append(date_posted_string)
 
+    logger.info("Successfully Scraped")
+
     list_date_posted_converted = []
     for i in list_date_posted_string:
         list_date_posted_converted.append(date_converter(i))
+
+    logger.info("Converted date_posted to date_time format")
 
     df = pd.DataFrame(np.column_stack(
         [list_price, list_bedroom, list_bathroom, list_area, list_location, list_date_posted_converted, list_id]),
@@ -89,12 +111,21 @@ def main():
     initial_csv_name = "initial_Data({})".format(current_date)
     initial_data_path = "Data/initial Data/" + initial_csv_name + ".csv"
     df.to_csv(initial_data_path, index=False)
+    logger.info("{}.csv Saved".format(initial_csv_name))
 
-    df_cleaned= dfCleaner(initial_data_path)
+    try:
+        df_cleaned = dfCleaner(initial_data_path)
+    except:
+        logger.error('CLeaning FAILED !!')
+
     clean_csv_name = "clean_Data({})".format(current_date)
     clean_data_path = "Data/clean Data/" + clean_csv_name + ".csv"
-    df_cleaned.to_csv(clean_data_path,index=False)
+    df_cleaned.to_csv(clean_data_path, index=False)
+    logger.info("{}.csv Saved".format(clean_csv_name))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        logger.critical('MAIN ERROR FALIED')
