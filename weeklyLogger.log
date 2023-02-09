@@ -6,3 +6,9 @@ CRITICAL:2023-02-09T16:11:27+0200:__main__:MAIN ERROR FALIED
 CRITICAL:2023-02-09T16:12:42+0200:__main__:MAIN ERROR FALIED
 CRITICAL:2023-02-09T16:15:43+0200:__main__:MAIN ERROR FALIED
 CRITICAL:2023-02-09T16:34:29+0200:__main__:MAIN ERROR FALIED
+INFO:2023-02-09T14:59:52+0000:__main__:Successfully Scraped
+INFO:2023-02-09T14:59:52+0000:__main__:Converted date_posted to date_time format
+INFO:2023-02-09T14:59:52+0000:__main__:initial_Data(02-09-23).csv Saved
+INFO:2023-02-09T14:59:52+0000:cleaner_script:505:unique id found out of:5614
+INFO:2023-02-09T14:59:52+0000:cleaner_script:Saved new id list with new:505 ids now total:6595
+INFO:2023-02-09T14:59:52+0000:__main__:clean_Data(02-09-23).csv Saved
