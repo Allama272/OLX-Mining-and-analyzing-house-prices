@@ -24,6 +24,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: execute py script # run main_scrapy_script.py
+        env:
+          SOME_SECRET: ${{ secrets.APIKEY }}
         run: python main_scrapy_script.py
 
       - name: commit files

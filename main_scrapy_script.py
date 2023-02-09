@@ -65,14 +65,16 @@ def main():
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
     for i in range(1, 200):
-        proxies = {"http": "http://154.236.189.4:8080"}
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+        #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
 
-        session = requests.Session()
-        page_url = session.get(url.format(i),headers=headers,proxies=proxies)
+        #session = requests.Session()
+        payload = {'api_key': 'APIKEY', 'url': url.format(i)}
+        page_url = requests.get('http://api.scraperapi.com', params=payload)
+        #page_url = requests.get(url.format(i))
 
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
+        #print(content)
         # just to keep track of the proggress for testing
         logging.debug('{} out of 199'.format(i))
         for j in range(len(content)):
