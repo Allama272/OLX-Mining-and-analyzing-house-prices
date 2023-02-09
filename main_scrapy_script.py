@@ -65,10 +65,11 @@ def main():
     url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
     for i in range(1, 200):
+        proxies = {"http": "http://154.236.189.4:8080"}
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
 
         session = requests.Session()
-        page_url = session.get(url.format(i),headers=headers)
+        page_url = session.get(url.format(i),headers=headers,proxies=proxies)
 
         soup = BeautifulSoup(page_url.content, "html.parser")
         content = soup.find_all(class_="c46f3bfe")
