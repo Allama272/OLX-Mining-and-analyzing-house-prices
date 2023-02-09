@@ -25,7 +25,7 @@ jobs:
 
       - name: execute py script # run main_scrapy_script.py
         env:
-          SOME_SECRET: ${{ secrets.APIKEY }}
+          APIKEY: ${{ secrets.APIKEY }}
         run: python main_scrapy_script.py
 
       - name: commit files
