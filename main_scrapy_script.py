@@ -6,6 +6,7 @@ import re
 from datetime import date, timedelta
 from cleaner_script import dfCleaner
 import logging
+import os
 from urllib.request import Request, urlopen
 
 
@@ -68,7 +69,7 @@ def main():
         #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
 
         #session = requests.Session()
-        payload = {'api_key': 'APIKEY', 'url': url.format(i)}
+        payload = {'api_key': os.environ["APIKEY"], 'url': url.format(i)}
         page_url = requests.get('http://api.scraperapi.com', params=payload)
         #page_url = requests.get(url.format(i))
 
