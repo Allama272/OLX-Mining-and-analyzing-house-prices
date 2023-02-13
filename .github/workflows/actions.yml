@@ -2,7 +2,7 @@ name: run main_scrapy_script.py
 
 on:
   schedule:
-    - cron: '0 16 * * 3' # At 16:00 on Wednesday
+    - cron: '0 16 1,15 * *' # At 16:00 on day-of-month 1 and 15
   workflow_dispatch:
 
 jobs:
