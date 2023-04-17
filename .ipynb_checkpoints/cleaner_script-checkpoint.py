@@ -39,14 +39,14 @@ def dfCleaner(path):
     df = df.drop_duplicates(subset='id')
     all_id_num = df.shape[0]
 
-    # unique id check
+    # unique id check and drop
     id_df = pd.read_csv("Data/unique_id.csv")
-    new_id=df.loc[~df['id'].isin(id_df['id']), :]
-    unique_id_num= new_id.shape[0]
+    df = df.loc[~df['id'].isin(id_df['id']), :]
+    unique_id_num= df.shape[0]
 
     logger.info("{0}:unique id found out of:{1}".format(unique_id_num,all_id_num))
     # add new unique id from df to id list
-    new_id_df = pd.concat([id_df[['id']], new_id[['id']]])
+    new_id_df = pd.concat([id_df[['id']], df[['id']]])
     new_id_df.to_csv("Data/unique_id.csv", index=False)
     logger.info("Saved new id list with new:{0} ids now total:{1}".format(unique_id_num,new_id_df.shape[0]))
 
