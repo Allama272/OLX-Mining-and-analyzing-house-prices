@@ -6,9 +6,8 @@
 
 ## The Scrapper automatically collects data every 15 days and commits them 
 
-## The collected data consists of [price, Bedrooms, Bathrooms, area, location, date posted and id]
+## The collected data consists of [price (EGP), Bedrooms, Bathrooms, area (sqm), location, date posted and id]
 
 #### The id is the unique id olx gives to each ad in order to keep track of any redundant data in the future
-
-
-### I am also hoping to begin collecting data from other sources in the future and building a massive data frame of almost all apartments in Alexandria and then hopefully Egypt
+If upon scrapping in the new month there was an apartment that existed in the last month and was still not sold, it will still be counted in the data
+The reason for doing so is that those apartmtns are still a part of the market and should not be removed
