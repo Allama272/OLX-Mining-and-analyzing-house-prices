@@ -42,3 +42,4 @@ INFO:2023-04-15T16:29:01+0000:__main__:initial_Data(04-15-23).csv Saved
 INFO:2023-04-15T16:29:01+0000:cleaner_script:884:unique id found out of:4913
 INFO:2023-04-15T16:29:01+0000:cleaner_script:Saved new id list with new:884 ids now total:10471
 INFO:2023-04-15T16:29:01+0000:__main__:clean_Data(04-15-23).csv SavedCRITICAL:2023-05-01T16:10:28+0000:__main__:MAIN ERROR FALIED
+CRITICAL:2023-05-15T16:36:15+0000:__main__:MAIN ERROR FALIED
