@@ -55,6 +55,7 @@ def date_converter(ago):
 
 
 def main():
+    # There is 199 page you can access, almost all of them are posted from 1 day ago to 5 months ago "10/18/2022"
     list_price = []
     list_bedroom = []
     list_bathroom = []
@@ -63,40 +64,32 @@ def main():
     list_id = []
     list_date_posted_string = []
     # Only apartments in alexandria
-    url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
-
+    url = 'https://www.dubizzle.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
     for i in range(1, 200):
-        #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
-
-        #session = requests.Session()
-        payload = {'api_key': os.environ.get("APIKEY"), 'url': url.format(i)}
-        page_url = requests.get('http://api.scraperapi.com', params=payload)
-        #page_url = requests.get(url.format(i))
-
+        page_url = requests.get(url.format(i))
         soup = BeautifulSoup(page_url.content, "html.parser")
-        content = soup.find_all(class_="c46f3bfe")
-        #print(content)
-        # just to keep track of the proggress for testing
-        logging.debug('{} out of 199'.format(i))
+        content = soup.find_all(class_="a52608cc")
+        # just to keep track of the proggress
+        print(i, ' out of 199')
         for j in range(len(content)):
             href_tag = content[j].find('a', href=True)
             href_tag = str(href_tag)
-            apartment_id = re.search("ID(\d+).html", href_tag)
-            apartment_id = apartment_id.group(1)
-            price = content[j].find("div", class_="_52497c97").text
-            bedrooms = content[j].find("span", class_="fef55ec1 c47715cd")
+            id = re.search("ID(\d+).html", href_tag)
+            id = id.group(1)
+            price = content[j].find(class_="_95eae7db").text
+            bedrooms = content[j].find("span", class_="e05e3d9c")
             # Bedroom, bathroom, and area have the same class name so we just find the next sibling
-            bath_area = bedrooms.find_next_siblings("span", class_="fef55ec1 c47715cd")
+            bath_area = bedrooms.find_next_siblings("span", class_="e05e3d9c")
             # the next sibling contains 2 classes one for the bathroom and one for the area
             bathrooms = bath_area[0].text
             area = bath_area[1].text
             # area got a lot of weird text, I just split it and took only the number part
-            area = area.split("area")[1]
+            # area=area.split("area")[1]
             bedrooms = bedrooms.text
-            location = content[j].find("span", class_="_424bf2a8").text
-            date_posted_string = content[0].find("span", class_="_2e28a695").text
+            location = content[j].find("span", class_="_2fc90438").text
+            date_posted_string = content[0].find("span", class_="c4ad15ab").text
 
-            list_id.append(apartment_id)
+            list_id.append(id)
             list_price.append(price)
             list_bedroom.append(bedrooms)
             list_bathroom.append(bathrooms)
