@@ -50,3 +50,9 @@ INFO:2023-06-21T11:53:39+0000:__main__:initial_Data(06-21-23).csv Saved
 INFO:2023-06-21T11:53:39+0000:cleaner_script:2967:unique id found out of:4345
 INFO:2023-06-21T11:53:39+0000:cleaner_script:Saved new id list with new:2967 ids now total:13438
 INFO:2023-06-21T11:53:39+0000:__main__:clean_Data(06-21-23).csv Saved
+INFO:2023-07-01T16:18:07+0000:__main__:Successfully Scraped
+INFO:2023-07-01T16:18:07+0000:__main__:Converted date_posted to date_time format
+INFO:2023-07-01T16:18:07+0000:__main__:initial_Data(07-01-23).csv Saved
+INFO:2023-07-01T16:18:07+0000:cleaner_script:412:unique id found out of:4222
+INFO:2023-07-01T16:18:07+0000:cleaner_script:Saved new id list with new:412 ids now total:13850
+INFO:2023-07-01T16:18:07+0000:__main__:clean_Data(07-01-23).csv Saved
