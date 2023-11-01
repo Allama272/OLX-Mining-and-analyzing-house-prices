@@ -98,3 +98,9 @@ INFO:2023-10-15T16:16:08+0000:__main__:initial_Data(10-15-23).csv Saved
 INFO:2023-10-15T16:16:08+0000:cleaner_script:697:unique id found out of:3245
 INFO:2023-10-15T16:16:08+0000:cleaner_script:Saved new id list with new:697 ids now total:19262
 INFO:2023-10-15T16:16:08+0000:__main__:clean_Data(10-15-23).csv Saved
+INFO:2023-11-01T16:16:42+0000:__main__:Successfully Scraped
+INFO:2023-11-01T16:16:42+0000:__main__:Converted date_posted to date_time format
+INFO:2023-11-01T16:16:42+0000:__main__:initial_Data(11-01-23).csv Saved
+INFO:2023-11-01T16:16:42+0000:cleaner_script:826:unique id found out of:3088
+INFO:2023-11-01T16:16:42+0000:cleaner_script:Saved new id list with new:826 ids now total:20088
+INFO:2023-11-01T16:16:42+0000:__main__:clean_Data(11-01-23).csv Saved
