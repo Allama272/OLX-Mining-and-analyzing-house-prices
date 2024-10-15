@@ -236,3 +236,9 @@ INFO:2024-10-01T16:18:36+0000:__main__:initial_Data(10-01-24).csv Saved
 INFO:2024-10-01T16:18:36+0000:cleaner_script:0:unique id found out of:0
 INFO:2024-10-01T16:18:36+0000:cleaner_script:Saved new id list with new:0 ids now total:29209
 INFO:2024-10-01T16:18:36+0000:__main__:clean_Data(10-01-24).csv Saved
+INFO:2024-10-15T16:18:15+0000:__main__:Successfully Scraped
+INFO:2024-10-15T16:18:15+0000:__main__:Converted date_posted to date_time format
+INFO:2024-10-15T16:18:15+0000:__main__:initial_Data(10-15-24).csv Saved
+INFO:2024-10-15T16:18:15+0000:cleaner_script:0:unique id found out of:0
+INFO:2024-10-15T16:18:15+0000:cleaner_script:Saved new id list with new:0 ids now total:29209
+INFO:2024-10-15T16:18:15+0000:__main__:clean_Data(10-15-24).csv Saved
