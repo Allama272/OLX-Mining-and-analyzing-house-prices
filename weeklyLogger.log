@@ -242,3 +242,8 @@ INFO:2024-10-15T16:18:15+0000:__main__:initial_Data(10-15-24).csv Saved
 INFO:2024-10-15T16:18:15+0000:cleaner_script:0:unique id found out of:0
 INFO:2024-10-15T16:18:15+0000:cleaner_script:Saved new id list with new:0 ids now total:29209
 INFO:2024-10-15T16:18:15+0000:__main__:clean_Data(10-15-24).csv Saved
+
+INFO:2024-11-01T13:58:33+0200:__main__:Saved initial_Data(11-01-24).csv
+INFO:2024-11-01T13:58:33+0200:cleaner_script:426:unique id found out of:437
+INFO:2024-11-01T13:58:33+0200:cleaner_script:Saved new id list with new:426 ids now total:29635
+INFO:2024-11-01T13:58:33+0200:__main__:Scraping process completed successfully
