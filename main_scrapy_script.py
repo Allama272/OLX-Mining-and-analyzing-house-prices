@@ -182,7 +182,7 @@ def main():
 
         # Clean and save cleaned DataFrame
         df_cleaned = dfCleaner(initial_filepath)
-        #save_dataframe(df_cleaned, "clean")
+        save_dataframe(df_cleaned, "clean")
         print(df_cleaned.head())
         logger.info("Scraping process completed successfully")
 
