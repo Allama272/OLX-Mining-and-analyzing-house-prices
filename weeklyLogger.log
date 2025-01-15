@@ -277,3 +277,8 @@ INFO:2025-01-01T16:17:11+0000:cleaner_script:7490:unique id found out of:9714
 INFO:2025-01-01T16:17:11+0000:cleaner_script:Saved new id list with new:7490 ids now total:68420
 INFO:2025-01-01T16:17:11+0000:__main__:Saved clean_Data(01-01-25).csv
 INFO:2025-01-01T16:17:11+0000:__main__:Scraping process completed successfully
+INFO:2025-01-15T16:22:49+0000:__main__:Saved initial_Data(01-15-25).csv
+INFO:2025-01-15T16:22:49+0000:cleaner_script:6284:unique id found out of:8635
+INFO:2025-01-15T16:22:49+0000:cleaner_script:Saved new id list with new:6284 ids now total:74704
+INFO:2025-01-15T16:22:49+0000:__main__:Saved clean_Data(01-15-25).csv
+INFO:2025-01-15T16:22:49+0000:__main__:Scraping process completed successfully
