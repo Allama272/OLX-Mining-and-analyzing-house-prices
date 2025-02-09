@@ -90,10 +90,10 @@ def scrape_property_listing(content) -> PropertyListing:
             raise ValueError("Could not find property ID")
         property_data = PropertyListing(
             id=id_match.group(1),
-            price=content.find('div', attrs={'aria-label': 'Price'}).find('span').text,
-            bedrooms=content.find('span', attrs={'aria-label': 'Beds'}).find('span', class_='').text,
-            bathrooms=content.find('span', attrs={'aria-label': 'Bathrooms'}).find('span', class_='').text,
-            area=content.find('span', attrs={'aria-label': 'Area'}).find('span', class_='').text,
+            price=content.find('div', attrs={'aria-label': 'Price'}).text,
+            bedrooms=content.find('span', attrs={'aria-label': 'Beds'}).text,
+            bathrooms=content.find('span', attrs={'aria-label': 'Bathrooms'}).text,
+            area=content.find('span', attrs={'aria-label': 'Area'}).text,
             location=content.find('span', attrs={'aria-label': 'Location'}).text,
             date_posted=content.find('span', attrs={'aria-label': 'Creation date'}).text
         )

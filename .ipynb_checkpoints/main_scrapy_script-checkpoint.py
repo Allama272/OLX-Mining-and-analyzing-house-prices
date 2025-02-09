@@ -7,135 +7,190 @@ from datetime import date, timedelta
 from cleaner_script import dfCleaner
 import logging
 import os
-from urllib.request import Request, urlopen
+from typing import List, Dict, Union
+from dataclasses import dataclass
 
 
-logging.basicConfig(
-    format="%(asctime)s %(message)s",
-    datefmt="%Y-%m-%dT%H:%M:%S%z",level=logging.DEBUG
-)
+# Configure logging
+def setup_logger(log_file: str = 'weeklyLogger.log') -> logging.Logger:
+    """Configure and return a logger with both file and console handlers."""
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+    # Create formatters and handlers
+    formatter = logging.Formatter(
+        "%(levelname)s:%(asctime)s:%(name)s:%(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S%z"
+    )
 
-formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s:%(message)s",datefmt="%Y-%m-%dT%H:%M:%S%z")
+    # File handler
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
 
-file_handler = logging.FileHandler('weeklyLogger.log')
-file_handler.setLevel(logging.INFO)
-file_handler.setFormatter(formatter)
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(formatter)
 
-logger.addHandler(file_handler)
+    # Add handlers
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
 
-
-def days_ago_finder(str_ago):
-    split = re.search(r"(\d+) (\w+)", str_ago).groups()
-    days = split[0]
-    days = int(days)
-    date_type = split[1]
-    if date_type == "days" or date_type == "day":
-        days *= 1
-    elif date_type == "weeks" or date_type == "week":
-        days *= 7
-    elif date_type == "months" or date_type == "month":
-        days *= 30
-    elif date_type == "years" or date_type == "year":
-        # hopefully never
-        days *= 365
-
-    else:
-        # in case of seconds, minutes, or hours
-        days *= 0
-    return days
+    return logger
 
 
-def date_converter(ago):
-    n = days_ago_finder(ago)
-    new_date = date.today() - timedelta(days=n)
-    return new_date
+@dataclass
+class PropertyListing:
+    """Data class to store property listing information."""
+    id: str
+    price: str
+    bedrooms: str
+    bathrooms: str
+    area: str
+    location: str
+    date_posted: str
+
+
+def convert_time_to_days(time_str: str) -> int:
+    """Convert time string (e.g., '2 days', '1 week') to number of days."""
+    match = re.search(r"(\d+) (\w+)", time_str)
+    if not match:
+        return 0
+
+    amount, unit = match.groups()
+    amount = int(amount)
+
+    time_units = {
+        'day': 1,
+        'days': 1,
+        'week': 7,
+        'weeks': 7,
+        'month': 30,
+        'months': 30,
+        'year': 365,
+        'years': 365
+    }
+
+    return amount * time_units.get(unit, 0)
+
+
+def get_date_from_ago(ago: str) -> date:
+    """Convert 'X time ago' string to actual date."""
+    days = convert_time_to_days(ago)
+    return date.today() - timedelta(days=days)
+
+
+def scrape_property_listing(content) -> PropertyListing:
+    """Extract property information from a single listing."""
+    try:
+        href_tag = str(content.find('a', href=True))
+        id_match = re.search(r"ID(\d+).html", href_tag)
+        if not id_match:
+            raise ValueError("Could not find property ID")
+        property_data = PropertyListing(
+            id=id_match.group(1),
+            price=content.find('div', attrs={'aria-label': 'Price'}).text,
+            bedrooms=content.find('span', attrs={'aria-label': 'Beds'}).text,
+            bathrooms=content.find('span', attrs={'aria-label': 'Bathrooms'}).text,
+            area=content.find('span', attrs={'aria-label': 'Area'}).text,
+            location=content.find('span', attrs={'aria-label': 'Location'}).text,
+            date_posted=content.find('span', attrs={'aria-label': 'Creation date'}).text
+        )
+        return property_data
+    except Exception as e:
+        logger.error(f"Error scraping listing: {str(e)}")
+        print(e)
+        return None
+
+
+def scrape_properties(base_url: str, max_pages: int = 199) -> List[PropertyListing]:
+    """Scrape property listings from multiple pages."""
+    properties = []
+    session = requests.Session()
+
+    for page in range(1, max_pages + 1):
+        try:
+            print(f"Scraping page {page} of {max_pages}")
+            response = session.get(base_url.format(page))
+            response.raise_for_status()
+
+            soup = BeautifulSoup(response.content, "html.parser")
+            listings = soup.find_all('li', attrs={'aria-label': 'Listing'})
+            for listing in listings:
+                property_data = scrape_property_listing(listing)
+                if property_data:
+                    properties.append(property_data)
+
+        except requests.RequestException as e:
+            logger.error(f"Error fetching page {page}: {str(e)}")
+            continue
+
+    return properties
+
+
+def create_dataframe(properties: List[PropertyListing]) -> pd.DataFrame:
+    """Convert property listings to a pandas DataFrame."""
+    data = {
+        'Price': [],
+        'Bedrooms': [],
+        'Bathrooms': [],
+        'Area': [],
+        'Location': [],
+        'date': [],
+        'id': []
+    }
+
+    for prop in properties:
+        data['Price'].append(prop.price)
+        data['Bedrooms'].append(prop.bedrooms)
+        data['Bathrooms'].append(prop.bathrooms)
+        data['Area'].append(prop.area)
+        data['Location'].append(prop.location)
+        data['date'].append(get_date_from_ago(prop.date_posted))
+        data['id'].append(prop.id)
+
+    return pd.DataFrame(data)
+
+
+def save_dataframe(df: pd.DataFrame, category: str) -> str:
+    """Save DataFrame to CSV file."""
+    current_date = date.today().strftime("%m-%d-%y")
+    filename = f"{category}_Data({current_date})"
+    filepath = f"Data/{category} Data/{filename}.csv"
+
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    df.to_csv(filepath, index=False)
+    logger.info(f"Saved {filename}.csv")
+
+    return filepath
 
 
 def main():
-    list_price = []
-    list_bedroom = []
-    list_bathroom = []
-    list_area = []
-    list_location = []
-    list_id = []
-    list_date_posted_string = []
-    # Only apartments in alexandria
-    url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
-
-    for i in range(1, 200):
-        #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
-
-        #session = requests.Session()
-        payload = {'api_key': os.environ.get("APIKEY"), 'url': url.format(i)}
-        page_url = requests.get('http://api.scraperapi.com', params=payload)
-        #page_url = requests.get(url.format(i))
-
-        soup = BeautifulSoup(page_url.content, "html.parser")
-        content = soup.find_all(class_="c46f3bfe")
-        #print(content)
-        # just to keep track of the proggress for testing
-        logging.debug('{} out of 199'.format(i))
-        for j in range(len(content)):
-            href_tag = content[j].find('a', href=True)
-            href_tag = str(href_tag)
-            apartment_id = re.search("ID(\d+).html", href_tag)
-            apartment_id = apartment_id.group(1)
-            price = content[j].find("div", class_="_52497c97").text
-            bedrooms = content[j].find("span", class_="fef55ec1 c47715cd")
-            # Bedroom, bathroom, and area have the same class name so we just find the next sibling
-            bath_area = bedrooms.find_next_siblings("span", class_="fef55ec1 c47715cd")
-            # the next sibling contains 2 classes one for the bathroom and one for the area
-            bathrooms = bath_area[0].text
-            area = bath_area[1].text
-            # area got a lot of weird text, I just split it and took only the number part
-            area = area.split("area")[1]
-            bedrooms = bedrooms.text
-            location = content[j].find("span", class_="_424bf2a8").text
-            date_posted_string = content[0].find("span", class_="_2e28a695").text
-
-            list_id.append(apartment_id)
-            list_price.append(price)
-            list_bedroom.append(bedrooms)
-            list_bathroom.append(bathrooms)
-            list_area.append(area)
-            list_location.append(location)
-            list_date_posted_string.append(date_posted_string)
-
-    logger.info("Successfully Scraped")
-
-    list_date_posted_converted = []
-    for i in list_date_posted_string:
-        list_date_posted_converted.append(date_converter(i))
-
-    logger.info("Converted date_posted to date_time format")
-
-    df = pd.DataFrame(np.column_stack(
-        [list_price, list_bedroom, list_bathroom, list_area, list_location, list_date_posted_converted, list_id]),
-        columns=['Price', 'Bedrooms', 'Bathrooms', 'Area', 'Location', 'date', 'id'])
-
-    today = date.today()
-    current_date = today.strftime("%m-%d-%y")
-    initial_csv_name = "initial_Data({})".format(current_date)
-    initial_data_path = "Data/initial Data/" + initial_csv_name + ".csv"
-    df.to_csv(initial_data_path, index=False)
-    logger.info("{}.csv Saved".format(initial_csv_name))
+    """Main function to orchestrate the scraping process."""
+    base_url = 'https://www.dubizzle.com.eg/en/properties/apartments-duplex-for-sale/alexandria/?page={}'
 
     try:
-        df_cleaned = dfCleaner(initial_data_path)
-    except:
-        logger.error('CLeaning FAILED !!')
+        # Scrape properties
+        properties = scrape_properties(base_url)
+        if not properties:
+            raise ValueError("No properties were scraped")
 
-    clean_csv_name = "clean_Data({})".format(current_date)
-    clean_data_path = "Data/clean Data/" + clean_csv_name + ".csv"
-    df_cleaned.to_csv(clean_data_path, index=False)
-    logger.info("{}.csv Saved".format(clean_csv_name))
+        # Create and save initial DataFrame
+        df = create_dataframe(properties)
+        initial_filepath = save_dataframe(df, "initial")
+
+        # Clean and save cleaned DataFrame
+        df_cleaned = dfCleaner(initial_filepath)
+        save_dataframe(df_cleaned, "clean")
+        print(df_cleaned.head())
+        logger.info("Scraping process completed successfully")
+
+    except Exception as e:
+        logger.critical(f"Critical error in main process: {str(e)}", exc_info=True)
+        raise
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        logger.critical('MAIN ERROR FALIED')
+    logger = setup_logger()
+    main()
